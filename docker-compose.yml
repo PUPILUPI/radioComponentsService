@@ -21,10 +21,10 @@ services:
     command: bash -c /docker-entrypoint-initdb.d/startup.sh
   postgresql:
     container_name: postgresql_db
-    image: postgres:16.3
+    image: postgres:15
     environment:
       POSTGRES_DB: radioComponentsService
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: aA5914191
+      POSTGRES_USER: vova
+      POSTGRES_PASSWORD: 1234
     ports:
       - "5432:5432"
