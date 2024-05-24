@@ -50,6 +50,7 @@ public class SecurityConfig {
                                 .loginProcessingUrl("/process-login")
                                 .defaultSuccessUrl("/home")
                                 .failureUrl("/login?error=true")
+                                .permitAll()
                         )
                         .build();
         }
