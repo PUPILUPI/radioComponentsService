@@ -4,12 +4,10 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "user")
-@AllArgsConstructor
+@Table(name = "user", schema = "public")
+@Data
 @NoArgsConstructor
-@Getter
-@Setter
-@ToString
+@AllArgsConstructor
 public class User {
 
     @Id
