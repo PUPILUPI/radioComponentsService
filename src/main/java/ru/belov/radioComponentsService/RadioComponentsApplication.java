@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class RadioComponentsApplication {
 
     public static void main(String[] args) {
-
         SpringApplication.run(RadioComponentsApplication.class, args);
     }
 

@@ -2,20 +2,25 @@ package ru.belov.radioComponentsService.db.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "user", schema = "public")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+
+public class EntityUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "surname", unique = true, nullable = false)
+    @Column(name="role_user")
+    private String roleUser;
+
+    @Column(name = "surname")
     private String surname;
 
     @Column(name = "first_name")
@@ -32,4 +37,10 @@ public class User {
 
     @Column(name = "phone_number")
     private String phoneNumber;
+
+    @Column(name = "submit_flag")
+    private Boolean submitFlag = false;
+
+    @Column(name = "date_registration")
+    private OffsetDateTime dateRegistration = OffsetDateTime.now();
 }
