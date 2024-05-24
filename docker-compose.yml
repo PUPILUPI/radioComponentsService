@@ -1,0 +1,45 @@
+version: '3.7'
+
+services:
+  neo4j:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: neo4j_db
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    environment:
+      - NEO4J_AUTH=neo4j/aA5914190
+      - NEO4J_PLUGINS=["apoc"]
+      - APOC_IMPORT_FILE_ENABLED=true
+      - NEO4J_dbms_security_procedures_unrestricted=apoc.*
+    volumes:
+      - ./neo4j/data:/data # Монтируем том для данных
+#      - ./init.cypher:/var/lib/neo4j/import/init.cypher
+#      - ./startup.sh:/docker-entrypoint-initdb.d/startup.sh
+#    command: bash -c /docker-entrypoint-initdb.d/startup.sh
+  postgresql:
+    container_name: postgresql_db
+    image: postgres:16.3
+    environment:
+      POSTGRES_DB: radioComponentsService
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: aA5914191
+    ports:
+      - "5433:5432"
+#  pgadmin:
+#    container_name: pgadmin
+#    image: dpage/pgadmin4
+#    environment:
+#      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+#      PGADMIN_DEFAULT_PASSWORD: admin
+#    ports:
+#      - "8080:80"
+#    depends_on:
+#      - postgresql
+#    volumes:
+#      - ./data:/data
+#      - ./logs:/logs
+#      - ./import:/var/lib/neo4j/import
+#      - ./plugins:/plugins

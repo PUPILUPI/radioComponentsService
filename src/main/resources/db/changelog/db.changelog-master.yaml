@@ -1,3 +1,7 @@
 databaseChangeLog:
   - include:
-      file: db/changelog/v.1.0/db.changelog-sql-example.sql
+      file: db/changelog/sql/01-role-init.sql
+  - include:
+      file: db/changelog/sql/02-user-init.sql
+  - include:
+      file: db/changelog/sql/03-main-tables-init.sql
