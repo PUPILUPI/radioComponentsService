@@ -27,4 +27,4 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: aA5914191
     ports:
-      - "5433:5432"
+      - "5432:5432"
