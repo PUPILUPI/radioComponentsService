@@ -37,24 +37,24 @@ CREATE TABLE IF NOT EXISTS public.card
 CREATE TABLE IF NOT EXISTS public.legal_entity
 (
     seller_id         BIGINT PRIMARY KEY REFERENCES public."user" (user_id),
-    bank_name         VARCHAR(128) NOT NULL,
-    rc_bic            VARCHAR(9)   NOT NULL,
-    сorr_acc          VARCHAR(20)  NOT NULL,
-    company_name      VARCHAR(256) NOT NULL,
+    bank_name         VARCHAR(128),
+    rc_bic            VARCHAR(9),
+    сorr_acc          VARCHAR(20),
+    company_name      VARCHAR(256),
     zip               VARCHAR(6),
-    city              VARCHAR(128) NOT NULL,
+    city              VARCHAR(128),
     business_address  VARCHAR(256),
-    inn               VARCHAR(12)  NOT NULL,
+    inn               VARCHAR(12),
     kpp               VARCHAR(9),
-    acc               VARCHAR(20)  NOT NULL,
+    acc               VARCHAR(20),
     phone_number      VARCHAR(32),
     email             VARCHAR(64),
     flag_w_with_ind   BOOLEAN,
-    flag_manufacturer BOOLEAN      NOT NULL,
+    flag_manufacturer BOOLEAN,
     rating            NUMERIC(3, 2),
     api_address       VARCHAR(256),
     agreement         VARCHAR(256),
-    agreement_flag    BOOLEAN      NOT NULL DEFAULT FALSE
+    agreement_flag    BOOLEAN DEFAULT FALSE
 );
 
 -- consumer_entity - таблица для хранения данных, которые будут использованы при выставлении счета на
@@ -71,15 +71,17 @@ CREATE TABLE IF NOT EXISTS public.legal_entity
 CREATE TABLE IF NOT EXISTS public.consumer_entity
 (
     consumer_id      BIGINT PRIMARY KEY REFERENCES public."user" (user_id),
-    company_name     VARCHAR(256) NOT NULL,
+    company_name     VARCHAR(256),
     zip              VARCHAR(6),
     city             VARCHAR(128),
     business_address VARCHAR(256),
-    inn              VARCHAR(12)  NOT NULL,
+    inn              VARCHAR(12),
     kpp              VARCHAR(9),
     phone_number     VARCHAR(32),
     email            VARCHAR(64)
 );
+-- INSERT INTO public.consumer_entity(consumer_id, company_name, zip, city, business_address, inn, kpp, phone_number, email)
+-- VALUES (3)
 
 -- delivery_address - адреса доставок клиента
 -- address_id - айди адреса

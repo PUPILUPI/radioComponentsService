@@ -1,7 +1,11 @@
-package ru.belov.radioComponentsService.db.entity;
+package ru.belov.radioComponentsService.domain.entity.sql;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.time.OffsetDateTime;
 
 @Entity
@@ -9,16 +13,16 @@ import java.time.OffsetDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-
-public class EntityUser {
+@Builder(toBuilder = true)
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+    @Column(name = "user_id")
+    private Long userId;
 
-    @Column(name="role_user")
-    private String roleUser;
+    @Column(name = "user_role")
+    private String userRole;
 
     @Column(name = "surname")
     private String surname;
