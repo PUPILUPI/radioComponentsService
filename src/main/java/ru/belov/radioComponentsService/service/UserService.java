@@ -8,8 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.belov.radioComponentsService.domain.dto.sql.ConsumerInfoDTO;
 import ru.belov.radioComponentsService.domain.dto.sql.ChangeSellerInfoDTO;
 import ru.belov.radioComponentsService.domain.dto.sql.UserDTO;
-import ru.belov.radioComponentsService.domain.entity.sql.User;
-import ru.belov.radioComponentsService.mapper.SellerInfoMapper;
+import ru.belov.radioComponentsService.domain.entity.sql.MyUser;
 import ru.belov.radioComponentsService.mapper.UserMapper;
 import ru.belov.radioComponentsService.repository.UserRepository;
 
@@ -25,12 +24,12 @@ public class UserService {
     private final UserMapper userMapper;
 //    private final PasswordEncoder passwordEncoder;
 
-    public void updateSubmitFlagUser(User user) {
+    public void updateSubmitFlagUser(MyUser user) {
         user.setSubmitFlag(true);
         userRepository.save(user);
     }
 
-    public void updatePassword(User user, String password) {
+    public void updatePassword(MyUser user, String password) {
 //        String newPassword = passwordEncoder.encode(password);
 //        entityUser.setPassword(newPassword);
 //        userRepository.save(entityUser);
@@ -41,7 +40,7 @@ public class UserService {
         if (userRepository.findByEmail(userDTO.email()).isPresent()) {
             throw new RuntimeException("Пользователь с таким email уже существует");
         }
-        User user = userMapper.toEntity(userDTO);
+        MyUser user = userMapper.toEntity(userDTO);
 //        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         user = userRepository.save(user);
         if (user.getUserRole().equals("INDIVIDUAL_CUSTOMER")

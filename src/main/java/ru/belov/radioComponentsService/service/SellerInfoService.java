@@ -8,7 +8,7 @@ import ru.belov.radioComponentsService.domain.dto.sql.ChangeSellerInfoDTO;
 import ru.belov.radioComponentsService.domain.dto.sql.DisplaySellerInfoDTO;
 import ru.belov.radioComponentsService.domain.dto.sql.FilterSellerInfoDTO;
 import ru.belov.radioComponentsService.domain.entity.sql.SellerInfo;
-import ru.belov.radioComponentsService.domain.entity.sql.User;
+import ru.belov.radioComponentsService.domain.entity.sql.MyUser;
 import ru.belov.radioComponentsService.mapper.SellerInfoMapper;
 import ru.belov.radioComponentsService.repository.SellerInfoRepository;
 import ru.belov.radioComponentsService.repository.UserRepository;
@@ -26,7 +26,7 @@ public class SellerInfoService {
 
 
     public ChangeSellerInfoDTO create(ChangeSellerInfoDTO dto) {
-        User user = userRepository.findById(dto.id())
+        MyUser user = userRepository.findById(dto.id())
                 .orElseThrow(() -> new RuntimeException("User not found"));
         SellerInfo sellerInfo = sellerInfoMapper.toEntity(dto);
         if (!Objects.equals(user.getUserRole(), "MANUFACTURER")) sellerInfo.setFlagManufacturer(false);

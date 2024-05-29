@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.belov.radioComponentsService.domain.dto.sql.ConsumerInfoDTO;
 import ru.belov.radioComponentsService.domain.entity.sql.ConsumerInfo;
-import ru.belov.radioComponentsService.domain.entity.sql.User;
+import ru.belov.radioComponentsService.domain.entity.sql.MyUser;
 import ru.belov.radioComponentsService.mapper.ConsumerInfoMapper;
 import ru.belov.radioComponentsService.repository.ConsumerInfoRepository;
 import ru.belov.radioComponentsService.repository.UserRepository;
@@ -17,7 +17,7 @@ public class ConsumerInfoService {
     private final ConsumerInfoMapper consumerInfoMapper;
 
     public ConsumerInfoDTO create(ConsumerInfoDTO dto) {
-        User user = userRepository.findById(dto.id())
+        MyUser user = userRepository.findById(dto.id())
                 .orElseThrow(() -> new RuntimeException("User not found"));
         ConsumerInfo consumerInfo = consumerInfoMapper.toEntity(dto);
         consumerInfo.setUser(user);

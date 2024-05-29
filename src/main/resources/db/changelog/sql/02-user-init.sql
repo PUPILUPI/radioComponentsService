@@ -18,7 +18,7 @@ VALUES ('ADMIN', 'Иванов', 'Иван', 'Иванович', 'ivan.ivanov@ex
        ('INDIVIDUAL_CUSTOMER', 'Сидорова', 'Мария', 'Ивановна', 'maria.sidorova@example.com', '$2a$12$TCZnL2QT2Ano8TkR3aShPeIjMgPIAHHqKlt4sEWc5KdL7aRtP/LM2', '+7 (456) 789-01-23', true),
        ('LEGAL_CUSTOMER', 'Кузнецов', 'Алексей', 'Сергеевич', 'alexey.kuznetsov@example.com', '$2a$12$TCZnL2QT2Ano8TkR3aShPeIjMgPIAHHqKlt4sEWc5KdL7aRtP/LM2', '+7 (321) 098-76-54', true),
        ('SUPPLIER', 'Смирнова', 'Екатерина', 'Владимировна', 'ekaterina.smirnova@example.com', '$2a$12$TCZnL2QT2Ano8TkR3aShPeIjMgPIAHHqKlt4sEWc5KdL7aRtP/LM2', '+7 (876) 543-21-09', true),
-       ('MANUFACTURER', 'Егоров', 'Егор', 'Егорович', 'bev6889@gmail.com', '$2a$12$TCZnL2QT2Ano8TkR3aShPeIjMgPIAHHqKlt4sEWc5KdL7aRtP/LM2', '+7 (876) 555-35-35', true),
+       ('MANUFACTURER', 'Егоров', 'Егор', 'Егорович', 'belov@gmail.com', '$2a$12$TCZnL2QT2Ano8TkR3aShPeIjMgPIAHHqKlt4sEWc5KdL7aRtP/LM2', '+7 (876) 555-35-35', true),
        ('SUPPLIER', 'Иванов', 'Иван', 'Иванович', 'ivaiva@example.com', '$2a$12$TCZnL2QT2Ano8TkR3aShPeIjMgPIAHHqKlt4sEWc5KdL7aRtP/LM2', '+7 (876) 111-11-11', true),
        ('MANUFACTURER', 'Петров', 'Петр', 'Петрович', 'petropetro@example.com', '$2a$12$TCZnL2QT2Ano8TkR3aShPeIjMgPIAHHqKlt4sEWc5KdL7aRtP/LM2', '+7 (876) 222-22-22', true),
        ('SUPPLIER', 'Сидоров', 'Алексей', 'Алексеевич', 'sidoroalex@example.com', '$2a$12$TCZnL2QT2Ano8TkR3aShPeIjMgPIAHHqKlt4sEWc5KdL7aRtP/LM2', '+7 (876) 333-33-33', true),

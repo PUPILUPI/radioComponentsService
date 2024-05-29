@@ -19,7 +19,7 @@ public class ConsumerInfo {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "consumer_id")
     @MapsId
-    private User user;
+    private MyUser user;
 
     @Column(name = "company_name")
     private String companyName;

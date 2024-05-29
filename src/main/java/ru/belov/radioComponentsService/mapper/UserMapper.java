@@ -2,12 +2,12 @@ package ru.belov.radioComponentsService.mapper;
 
 import org.springframework.stereotype.Component;
 import ru.belov.radioComponentsService.domain.dto.sql.UserDTO;
-import ru.belov.radioComponentsService.domain.entity.sql.User;
+import ru.belov.radioComponentsService.domain.entity.sql.MyUser;
 
 @Component
 public class UserMapper {
-    public User toEntity(UserDTO userDTO) {
-        User user = new User();
+    public MyUser toEntity(UserDTO userDTO) {
+        MyUser user = new MyUser();
         user.setUserRole(userDTO.roleUser());
         user.setSurname(userDTO.surname());
         user.setFirstName(userDTO.firstName());
@@ -18,7 +18,7 @@ public class UserMapper {
         return user;
     }
 
-    public UserDTO toDTO(User user) {
+    public UserDTO toDTO(MyUser user) {
         return new UserDTO(
                 user.getUserId(),
                 user.getUserRole(),

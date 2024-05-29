@@ -19,7 +19,7 @@ public class SellerInfo {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id")
     @MapsId
-    private User user;
+    private MyUser user;
 
     @Column(name = "bank_name")
     private String bankName;

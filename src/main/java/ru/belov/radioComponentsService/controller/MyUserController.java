@@ -4,16 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import ru.belov.radioComponentsService.domain.dto.sql.UserDTO;
 import ru.belov.radioComponentsService.service.UserService;
 
 @Controller
 @RequiredArgsConstructor
-public class UserController {
+@RequestMapping("api")
+public class MyUserController {
     private final UserService userService;
 
     @ResponseBody
