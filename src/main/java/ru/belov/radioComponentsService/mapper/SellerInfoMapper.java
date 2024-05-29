@@ -1,12 +1,15 @@
 package ru.belov.radioComponentsService.mapper;
 
 import org.springframework.stereotype.Component;
-import ru.belov.radioComponentsService.domain.dto.sql.SellerInfoDTO;
+import ru.belov.radioComponentsService.domain.dto.sql.ChangeSellerInfoDTO;
+import ru.belov.radioComponentsService.domain.dto.sql.DisplaySellerInfoDTO;
 import ru.belov.radioComponentsService.domain.entity.sql.SellerInfo;
+
+import java.util.List;
 
 @Component
 public class SellerInfoMapper {
-    public SellerInfo toEntity(SellerInfoDTO dto) {
+    public SellerInfo toEntity(ChangeSellerInfoDTO dto) {
         return new SellerInfo().toBuilder()
                 .bankName(dto.bankName())
                 .rcBic(dto.rcBic())
@@ -25,8 +28,8 @@ public class SellerInfoMapper {
                 .build();
     }
 
-    public SellerInfoDTO toDTO(SellerInfo sellerInfo) {
-        return new SellerInfoDTO(
+    public ChangeSellerInfoDTO toDTO(SellerInfo sellerInfo) {
+        return new ChangeSellerInfoDTO(
                 sellerInfo.getId(),
                 sellerInfo.getBankName(),
                 sellerInfo.getRcBic(),
@@ -43,6 +46,26 @@ public class SellerInfoMapper {
                 sellerInfo.getIndFlag(),
                 sellerInfo.getApiAddress()
         );
+    }
+
+    public List<DisplaySellerInfoDTO> toDTO(List<SellerInfo> info) {
+        return info.stream().map(this::toDisplayDTO).toList();
+    }
+
+    private DisplaySellerInfoDTO toDisplayDTO(SellerInfo sellerInfo) {
+        return new DisplaySellerInfoDTO(
+                sellerInfo.getCompanyName(),
+                sellerInfo.getZip(),
+                sellerInfo.getCity(),
+                sellerInfo.getBusinessAddress(),
+                sellerInfo.getInn(),
+                sellerInfo.getKpp(),
+                sellerInfo.getPhoneNumber(),
+                sellerInfo.getEmail(),
+                sellerInfo.getIndFlag(),
+                sellerInfo.getFlagManufacturer(),
+                sellerInfo.getRating()
+                );
     }
 
 }

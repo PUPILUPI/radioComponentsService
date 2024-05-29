@@ -1,10 +1,12 @@
 package ru.belov.radioComponentsService.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import ru.belov.radioComponentsService.domain.dto.sql.ChangeSellerInfoDTO;
+import ru.belov.radioComponentsService.domain.dto.sql.DisplaySellerInfoDTO;
 import ru.belov.radioComponentsService.domain.dto.sql.FilterSellerInfoDTO;
-import ru.belov.radioComponentsService.domain.dto.sql.SellerInfoDTO;
 import ru.belov.radioComponentsService.domain.entity.sql.SellerInfo;
 import ru.belov.radioComponentsService.domain.entity.sql.User;
 import ru.belov.radioComponentsService.mapper.SellerInfoMapper;
@@ -22,11 +24,8 @@ public class SellerInfoService {
     private final UserRepository userRepository;
     private final SellerInfoMapper sellerInfoMapper;
 
-    public List<SellerInfo> getAll() {
-        return sellerInfoRepository.findAll();
-    }
 
-    public SellerInfoDTO create(SellerInfoDTO dto) {
+    public ChangeSellerInfoDTO create(ChangeSellerInfoDTO dto) {
         User user = userRepository.findById(dto.id())
                 .orElseThrow(() -> new RuntimeException("User not found"));
         SellerInfo sellerInfo = sellerInfoMapper.toEntity(dto);
@@ -35,13 +34,13 @@ public class SellerInfoService {
         return sellerInfoMapper.toDTO(sellerInfoRepository.save(sellerInfo));
     }
 
-    public SellerInfoDTO getSellerInfo(Long id) {
+    public ChangeSellerInfoDTO getSellerInfo(Long id) {
         return sellerInfoRepository.findById(id)
                 .map(sellerInfoMapper::toDTO)
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
-    public SellerInfoDTO updateSellerInfo(SellerInfoDTO dto) {
+    public ChangeSellerInfoDTO updateSellerInfo(ChangeSellerInfoDTO dto) {
         SellerInfo newSellerInfo = sellerInfoRepository.findById(dto.id()).map(oldInfo -> {
                     oldInfo.setBankName(dto.bankName());
                     oldInfo.setRcBic(dto.rcBic());
@@ -63,10 +62,13 @@ public class SellerInfoService {
         return sellerInfoMapper.toDTO(newSellerInfo);
     }
 
-    public List<SellerInfo> filters(FilterSellerInfoDTO filter) {
+    public List<DisplaySellerInfoDTO> filter(FilterSellerInfoDTO filter, Pageable pageable) {
         Specification<SellerInfo> spec = Specification.where(null);
         if (filter.indFlag() != null) {
             spec = spec.and(SellerInfoSpecification.hasIndFlag(filter.indFlag()));
+        }
+        if (filter.flagManufacturer() != null) {
+            spec = spec.and(SellerInfoSpecification.hasflagManufacturer(filter.flagManufacturer()));
         }
         if (filter.rating() != null) {
             spec = spec.and(SellerInfoSpecification.hasRatingGreaterThanOrEqual(filter.rating()));
@@ -74,6 +76,6 @@ public class SellerInfoService {
         if (filter.city() != null) {
             spec = spec.and(SellerInfoSpecification.hasCity(filter.city()));
         }
-        return sellerInfoRepository.findAll(spec);
+        return sellerInfoMapper.toDTO(sellerInfoRepository.findAll(spec, pageable).toList());
     }
 }

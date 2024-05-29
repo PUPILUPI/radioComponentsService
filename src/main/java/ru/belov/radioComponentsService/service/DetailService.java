@@ -17,8 +17,8 @@ public class DetailService {
     private final DetailRepository detailRepository;
     private final DetailMapper detailMapper;
 
-    public List<DetailDTO> getDetailsByCategory(String category) {
-        return detailRepository.findByCategory(category)
+    public List<DetailDTO> getDetailsByCategory(String category, int page, int size) {
+        return detailRepository.findByCategory(category, (page - 1) * size, size)
                 .stream()
                 .map(detailMapper::toDTO)
                 .toList();

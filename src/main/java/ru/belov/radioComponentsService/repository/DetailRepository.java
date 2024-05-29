@@ -10,8 +10,9 @@ import java.util.List;
 
 @Repository
 public interface DetailRepository extends Neo4jRepository<Detail, String> {
-    @Query("MATCH (d:Detail) WHERE $category IN d.categories RETURN d")
-    List<Detail> findByCategory(String category);
+    //    @Query("MATCH (d:Detail) WHERE $category IN d.categories RETURN d")
+    @Query("MATCH (d:Detail) WHERE $category IN d.categories RETURN d SKIP $skip LIMIT $limit")
+    List<Detail> findByCategory(String category, int skip, int limit);
 
     @Query("MATCH (d:Detail {name: $name})-[r:ANALOG {type: $type}]->(a:Detail)" +
             " RETURN a.name AS name, a.manufacturer AS manufacturer, r.type AS analogType")

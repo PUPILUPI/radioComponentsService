@@ -17,9 +17,10 @@ public class DetailController {
     private final DetailService service;
 
     @GetMapping("/{category}")
-    public List<DetailDTO> getDetailsByCategory(@PathVariable String category) {
-        ;
-        return service.getDetailsByCategory(category);
+    public List<DetailDTO> getDetailsByCategory(@PathVariable String category,
+                                                @RequestParam(defaultValue = "1") int page,
+                                                @RequestParam(defaultValue = "20") int size) {
+        return service.getDetailsByCategory(category, page, size);
     }
 
     @PostMapping("/analog")

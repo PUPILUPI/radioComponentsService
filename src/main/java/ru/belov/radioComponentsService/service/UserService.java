@@ -6,7 +6,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.belov.radioComponentsService.domain.dto.sql.ConsumerInfoDTO;
-import ru.belov.radioComponentsService.domain.dto.sql.SellerInfoDTO;
+import ru.belov.radioComponentsService.domain.dto.sql.ChangeSellerInfoDTO;
 import ru.belov.radioComponentsService.domain.dto.sql.UserDTO;
 import ru.belov.radioComponentsService.domain.entity.sql.User;
 import ru.belov.radioComponentsService.mapper.SellerInfoMapper;
@@ -23,7 +23,6 @@ public class UserService {
     private final ConsumerInfoService consumerInfoService;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final SellerInfoMapper sellerInfoMapper;
 //    private final @Qualifier("transactionManager") PlatformTransactionManager transactionManager;
 
 //    private final PasswordEncoder passwordEncoder;
@@ -52,7 +51,7 @@ public class UserService {
             consumerInfoService.create(new ConsumerInfoDTO(user.getUserId()));
         } else if (user.getUserRole().equals("SUPPLIER")
                 || user.getUserRole().equals("MANUFACTURER")) {
-            sellerInfoService.create(new SellerInfoDTO(user.getUserId()));
+            sellerInfoService.create(new ChangeSellerInfoDTO(user.getUserId()));
         }
         try {
             emailService.sendEmail(userDTO.email());

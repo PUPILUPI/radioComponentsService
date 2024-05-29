@@ -1,6 +1,6 @@
 package ru.belov.radioComponentsService.domain.dto.sql;
 
-public record SellerInfoDTO(
+public record ChangeSellerInfoDTO(
         Long id,
         String bankName,
         String rcBic,
@@ -17,7 +17,7 @@ public record SellerInfoDTO(
         Boolean indFlag,
         String apiAddress
 ) {
-    public SellerInfoDTO(Long userId) {
+    public ChangeSellerInfoDTO(Long userId) {
         this(userId, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 }
