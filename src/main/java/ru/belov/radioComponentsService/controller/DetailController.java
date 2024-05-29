@@ -1,6 +1,9 @@
 package ru.belov.radioComponentsService.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import ru.belov.radioComponentsService.domain.dto.noSql.AnalogResponseDTO;
 import ru.belov.radioComponentsService.domain.dto.noSql.DetailDTO;
@@ -18,9 +21,8 @@ public class DetailController {
 
     @GetMapping("/{category}")
     public List<DetailDTO> getDetailsByCategory(@PathVariable String category,
-                                                @RequestParam(defaultValue = "1") int page,
-                                                @RequestParam(defaultValue = "20") int size) {
-        return service.getDetailsByCategory(category, page, size);
+                                                @PageableDefault(page = 0, size = 10) Pageable pageable) {
+        return service.getDetailsByCategory(category,pageable);
     }
 
     @PostMapping("/analog")

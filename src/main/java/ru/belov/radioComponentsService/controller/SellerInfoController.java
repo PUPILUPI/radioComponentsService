@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,13 +40,8 @@ public class SellerInfoController {
 
     @Transactional
     @PostMapping("/filter")
-    public ResponseEntity<List<DisplaySellerInfoDTO>> getFilteredSellerInfos(@RequestParam int page,
-                                                                             @RequestParam int size,
-                                                                             @RequestParam(defaultValue = "rating") String sortBy,
-                                                                             @RequestParam(defaultValue = "desc") String sortDirection,
+    public ResponseEntity<List<DisplaySellerInfoDTO>> getFilteredSellerInfos(@PageableDefault(page = 0, size = 10, sort = "rating", direction = Sort.Direction.DESC) Pageable pageable,
                                                                              @RequestBody FilterSellerInfoDTO filter) {
-        Sort.Direction direction = sortDirection.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Pageable pageable = PageRequest.of(page-1, size, Sort.by(direction, sortBy));
         return ResponseEntity.status(HttpStatus.OK).body(service.filter(filter, pageable));
     }
 

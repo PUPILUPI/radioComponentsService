@@ -23,8 +23,6 @@ public class UserService {
     private final ConsumerInfoService consumerInfoService;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-//    private final @Qualifier("transactionManager") PlatformTransactionManager transactionManager;
-
 //    private final PasswordEncoder passwordEncoder;
 
     public void updateSubmitFlagUser(User user) {

@@ -1,6 +1,7 @@
 package ru.belov.radioComponentsService.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.belov.radioComponentsService.domain.dto.noSql.AnalogResponseDTO;
 import ru.belov.radioComponentsService.domain.dto.noSql.DetailDTO;
@@ -17,8 +18,8 @@ public class DetailService {
     private final DetailRepository detailRepository;
     private final DetailMapper detailMapper;
 
-    public List<DetailDTO> getDetailsByCategory(String category, int page, int size) {
-        return detailRepository.findByCategory(category, (page - 1) * size, size)
+    public List<DetailDTO> getDetailsByCategory(String category, Pageable pageable) {
+        return detailRepository.findByCategory(category, pageable)
                 .stream()
                 .map(detailMapper::toDTO)
                 .toList();
