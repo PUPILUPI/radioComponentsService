@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.belov.radioComponentsService.domain.dto.sql.SellerDetail;
+import ru.belov.radioComponentsService.exceptions.GeneralException;
 import ru.belov.radioComponentsService.service.ApiService;
 
 @RestController
@@ -20,5 +21,10 @@ public class ApiController {
     @GetMapping
     public SellerDetail[] getPostsPlainJSON() {
         return apiService.getPostsPlainJSON();
+    }
+
+    @GetMapping("/test")
+    public String test() {
+        throw new GeneralException(409, "Привет");
     }
 }
