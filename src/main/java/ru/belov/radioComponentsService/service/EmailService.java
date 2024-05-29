@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import ru.belov.radioComponentsService.jwt.Token;
 
 @Service
 public class EmailService {
@@ -19,9 +20,9 @@ public class EmailService {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("bev6889@yandex.ru");
         message.setTo(email);
-//        String strToken=Token.getJwt(email);
+        String strToken= Token.getJwt(email);
         message.setSubject("регистрация");
-        message.setText("localhost:8080/token/" + "strToken");
+        message.setText("localhost:8080/token/" + strToken);
         emailSender.send(message);
     }
 
