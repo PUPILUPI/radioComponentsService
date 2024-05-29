@@ -1,5 +1,6 @@
 package ru.belov.radioComponentsService.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -16,6 +17,7 @@ import java.util.List;
 @CrossOrigin
 @RequestMapping("/detail")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "bearerAuth")
 public class DetailController {
     private final DetailService service;
 

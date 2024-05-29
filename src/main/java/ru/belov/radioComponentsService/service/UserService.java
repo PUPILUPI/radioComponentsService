@@ -3,6 +3,7 @@ package ru.belov.radioComponentsService.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.MailException;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.belov.radioComponentsService.domain.dto.sql.ConsumerInfoDTO;
@@ -11,6 +12,8 @@ import ru.belov.radioComponentsService.domain.dto.sql.UserDTO;
 import ru.belov.radioComponentsService.domain.entity.sql.MyUser;
 import ru.belov.radioComponentsService.mapper.UserMapper;
 import ru.belov.radioComponentsService.repository.UserRepository;
+
+import java.util.Optional;
 
 
 @Service
@@ -22,7 +25,7 @@ public class UserService {
     private final ConsumerInfoService consumerInfoService;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-//    private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     public void updateSubmitFlagUser(MyUser user) {
         user.setSubmitFlag(true);
@@ -36,12 +39,12 @@ public class UserService {
     }
 
     @Transactional
-    public UserDTO create(UserDTO userDTO) {
+    public MyUser create(UserDTO userDTO) {
         if (userRepository.findByEmail(userDTO.email()).isPresent()) {
             throw new RuntimeException("Пользователь с таким email уже существует");
         }
         MyUser user = userMapper.toEntity(userDTO);
-//        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        user.setPassword(passwordEncoder.encode(userDTO.password()));
         user = userRepository.save(user);
         if (user.getUserRole().equals("INDIVIDUAL_CUSTOMER")
                 || user.getUserRole().equals("LEGAL_CUSTOMER")) {
@@ -55,7 +58,7 @@ public class UserService {
         } catch (MailException mailException) {
             throw new RuntimeException("Unable to send email");
         }
-        return userMapper.toDTO(user);
+        return user;
     }
 
     public UserDTO getUserInfo(Long id) {
@@ -64,12 +67,17 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
-//    public EntityUser findByEmail(String email) {
-////        Optional<EntityUser> user=userRepository.findByEmail(email);
-////        if(user.isEmpty()){
-////
-////        }
-////        return user.get();
-//    }
+    public MyUser getById(Long id){
+        return userRepository.findById(id)
+                .orElseThrow();
+    }
+
+    public MyUser findByEmail(String email) {
+        Optional<MyUser> user=userRepository.findByEmail(email);
+        if(user.isEmpty()){
+
+        }
+        return user.get();
+    }
 
 }

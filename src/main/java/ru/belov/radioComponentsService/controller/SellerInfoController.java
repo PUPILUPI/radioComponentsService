@@ -1,5 +1,6 @@
 package ru.belov.radioComponentsService.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +21,7 @@ import java.util.List;
 @CrossOrigin
 @RequestMapping("/seller")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "bearerAuth")
 public class SellerInfoController {
     private final SellerInfoService service;
 

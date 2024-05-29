@@ -1,53 +1,25 @@
 package ru.belov.radioComponentsService.controller;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import ru.belov.radioComponentsService.domain.dto.sql.UserDTO;
+import ru.belov.radioComponentsService.domain.entity.sql.MyUser;
+import ru.belov.radioComponentsService.jwt.Token;
 import ru.belov.radioComponentsService.service.UserService;
 
 @Controller
 @RequiredArgsConstructor
+@SecurityRequirement(name = "bearerAuth")
 @RequestMapping("api")
 public class MyUserController {
     private final UserService userService;
 
-    @ResponseBody
-    @GetMapping("/test")
-    public String test() {
-        return "test";
-
-    }
-
-
-    @GetMapping("/login")
-    public String login() {
-        return "auth/login";
-    }
-
-
-    @PostMapping("/registration")
-    public @ResponseBody ResponseEntity<UserDTO> registration(@RequestBody UserDTO userDTO) {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.create(userDTO));
-    }
-
-//    @GetMapping("/token/{token}")
-//    public @ResponseBody ResponseEntity token( @PathVariable String token) {
-//        try {
-//            Jws<Claims> jwsToken = Token.parseJwt(token);
-//            String tokenStr=jwsToken.toString();
-//            int indexStart = tokenStr.indexOf("email") + "email".length()+1;
-//            int indexEnd = tokenStr.indexOf(",", indexStart);
-//            String email = tokenStr.substring(indexStart, indexEnd);
-//            EntityUser entityUser = userService.findByEmail(email);
-//            userService.updateSubmitFlagUser(entityUser);
-//            return new ResponseEntity<>(tokenStr, HttpStatus.OK);
-//        } catch (Exception e){
-//            return new ResponseEntity<>(token, HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
 
 //    @PostMapping("/recovery")
 //    public @ResponseBody ResponseEntity recovery(@RequestBody EmailDTO email) {

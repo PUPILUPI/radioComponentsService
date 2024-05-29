@@ -1,5 +1,6 @@
 package ru.belov.radioComponentsService.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +13,7 @@ import ru.belov.radioComponentsService.service.ApiService;
 @CrossOrigin
 @RequestMapping("/api")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "bearerAuth")
 public class ApiController {
     private final ApiService apiService;
 
