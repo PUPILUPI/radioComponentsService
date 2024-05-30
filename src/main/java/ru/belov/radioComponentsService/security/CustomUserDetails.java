@@ -1,15 +1,11 @@
 package ru.belov.radioComponentsService.security;
 
-import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ru.belov.radioComponentsService.domain.entity.sql.MyUser;
 
 import java.util.Collection;
 
-/**
- * @author Vladimir Krasnov
- */
 public class CustomUserDetails implements UserDetails {
 
     private final MyUser user;

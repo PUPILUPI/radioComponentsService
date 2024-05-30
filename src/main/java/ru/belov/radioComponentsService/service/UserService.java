@@ -10,6 +10,7 @@ import ru.belov.radioComponentsService.domain.dto.sql.ConsumerInfoDTO;
 import ru.belov.radioComponentsService.domain.dto.sql.ChangeSellerInfoDTO;
 import ru.belov.radioComponentsService.domain.dto.sql.UserDTO;
 import ru.belov.radioComponentsService.domain.entity.sql.MyUser;
+import ru.belov.radioComponentsService.exceptions.GeneralException;
 import ru.belov.radioComponentsService.mapper.UserMapper;
 import ru.belov.radioComponentsService.repository.UserRepository;
 
@@ -41,7 +42,7 @@ public class UserService {
     @Transactional
     public MyUser create(UserDTO userDTO) {
         if (userRepository.findByEmail(userDTO.email()).isPresent()) {
-            throw new RuntimeException("Пользователь с таким email уже существует");
+            throw new GeneralException(409, "Пользователь с таким email уже существует");
         }
         MyUser user = userMapper.toEntity(userDTO);
         user.setPassword(passwordEncoder.encode(userDTO.password()));
@@ -72,12 +73,8 @@ public class UserService {
                 .orElseThrow();
     }
 
-    public MyUser findByEmail(String email) {
-        Optional<MyUser> user=userRepository.findByEmail(email);
-        if(user.isEmpty()){
-
-        }
-        return user.get();
+    public Optional<MyUser> findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
 }

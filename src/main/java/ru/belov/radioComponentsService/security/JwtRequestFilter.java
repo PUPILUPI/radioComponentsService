@@ -23,9 +23,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-/**
- * @author Vladimir Krasnov
- */
 @Service
 @RequiredArgsConstructor
 public class JwtRequestFilter extends OncePerRequestFilter {

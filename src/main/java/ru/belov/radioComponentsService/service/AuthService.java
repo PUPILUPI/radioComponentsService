@@ -3,15 +3,18 @@ package ru.belov.radioComponentsService.service;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import lombok.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.belov.radioComponentsService.domain.RefreshDto;
 import ru.belov.radioComponentsService.domain.dto.JwtTokenDtoRes;
 import ru.belov.radioComponentsService.domain.dto.LoginDtoReq;
 import ru.belov.radioComponentsService.domain.entity.sql.MyUser;
+import ru.belov.radioComponentsService.exceptions.GeneralException;
 import ru.belov.radioComponentsService.utils.JwtUtil;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -21,10 +24,21 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AuthService {
     private final UserService userService;
+    private final PasswordEncoder encoder;
 
     public MyUser login(LoginDtoReq req){
-        //TODO цепочку проверок
-        return userService.findByEmail(req.getEmail());
+        Optional<MyUser> user = userService.findByEmail(req.getEmail());
+        if(user.isEmpty()) {
+            throw new GeneralException(404, "пользователь с таким email не найден");
+        }
+        if(!user.get().getSubmitFlag()) {
+            throw new GeneralException(409, "Почта не подтверждена, Пожалуйста, подветрдите почту перед входом");
+        }
+        if(!encoder.matches(req.getPassword(), user.get().getPassword())) {
+            throw new GeneralException(409, "Неверный пароль");
+        }
+
+        return userService.findByEmail(req.getEmail()).get();
     }
 
     public JwtTokenDtoRes refresh(RefreshDto req){

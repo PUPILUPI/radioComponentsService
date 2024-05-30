@@ -20,11 +20,14 @@ import ru.belov.radioComponentsService.domain.dto.JwtTokenDtoRes;
 import ru.belov.radioComponentsService.domain.dto.LoginDtoReq;
 import ru.belov.radioComponentsService.domain.dto.sql.UserDTO;
 import ru.belov.radioComponentsService.domain.entity.sql.MyUser;
+import ru.belov.radioComponentsService.exceptions.GeneralException;
 import ru.belov.radioComponentsService.jwt.Token;
 import ru.belov.radioComponentsService.mapper.UserMapper;
 import ru.belov.radioComponentsService.service.AuthService;
 import ru.belov.radioComponentsService.service.UserService;
 import ru.belov.radioComponentsService.utils.JwtUtil;
+
+import java.util.Optional;
 
 /**
  * @author Vladimir Krasnov
@@ -49,24 +52,23 @@ public class AuthController {
     public ResponseEntity<UserDTO> registerUser(@RequestBody UserDTO userDTO){
         MyUser user = userService.create(userDTO);
         return ResponseEntity
-                .status(HttpStatus.OK)
+                .status(HttpStatus.CREATED)
                 .body(userMapper.toDTO(user));
     }
 
     @GetMapping("/token/{token}")
     public ResponseEntity<String> token( @PathVariable String token) {
-        try {
             Jws<Claims> jwsToken = Token.parseJwt(token);
             String tokenStr=jwsToken.toString();
             int indexStart = tokenStr.indexOf("email") + "email".length()+1;
             int indexEnd = tokenStr.indexOf(",", indexStart);
             String email = tokenStr.substring(indexStart, indexEnd);
-            MyUser entityUser = userService.findByEmail(email);
-            userService.updateSubmitFlagUser(entityUser);
+            Optional<MyUser> user = userService.findByEmail(email);
+            if(user.isEmpty()) {
+                throw new GeneralException(404, "пользователь не найден");
+            }
+            userService.updateSubmitFlagUser(user.get());
             return new ResponseEntity<>(tokenStr, HttpStatus.OK);
-        } catch (Exception e){
-            return new ResponseEntity<>(token, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
     }
 
     @Operation(summary = "Login")
