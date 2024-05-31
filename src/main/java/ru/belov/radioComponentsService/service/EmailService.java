@@ -16,7 +16,7 @@ public class EmailService {
     }
 
 
-    public void sendEmail(String email) {
+    public void confirmEmail(String email) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("bev6889@yandex.ru");
         message.setTo(email);
@@ -26,13 +26,13 @@ public class EmailService {
         emailSender.send(message);
     }
 
-    public void sendEmailRecover(String email) {
+    public void recoverPasswordEmail(String email) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("bev6889@yandex.ru");
         message.setTo(email);
-//        String strToken=Token.getJwt(email);
-//        message.setSubject("восстановление пароля");
-//        message.setText("localhost:8080/recovery/"+strToken);
+        String strToken=Token.getJwt(email);
+        message.setSubject("восстановление пароля");
+        message.setText("localhost:8080/recovery/"+strToken);
         emailSender.send(message);
     }
 

@@ -10,31 +10,30 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import lombok.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.mail.MailException;
 import org.springframework.web.bind.annotation.*;
 import ru.belov.radioComponentsService.domain.RefreshDto;
 import ru.belov.radioComponentsService.domain.dto.JwtTokenDtoRes;
-import ru.belov.radioComponentsService.domain.dto.LoginDtoReq;
-import ru.belov.radioComponentsService.domain.dto.sql.UserDTO;
+import ru.belov.radioComponentsService.domain.dto.sql.EmailDTOReq;
+import ru.belov.radioComponentsService.domain.dto.sql.LoginDtoReq;
+import ru.belov.radioComponentsService.domain.dto.sql.RecoverPasswordDTOReq;
+import ru.belov.radioComponentsService.domain.dto.sql.RegDtoReq;
 import ru.belov.radioComponentsService.domain.entity.sql.MyUser;
 import ru.belov.radioComponentsService.exceptions.GeneralException;
 import ru.belov.radioComponentsService.jwt.Token;
 import ru.belov.radioComponentsService.mapper.UserMapper;
 import ru.belov.radioComponentsService.service.AuthService;
+import ru.belov.radioComponentsService.service.EmailService;
 import ru.belov.radioComponentsService.service.UserService;
 import ru.belov.radioComponentsService.utils.JwtUtil;
 
 import java.util.Optional;
 
-/**
- * @author Vladimir Krasnov
- */
 @RestController
 @RequiredArgsConstructor
-@Validated
 @CrossOrigin
 @SecurityRequirement(name = "bearerAuth")
 @RequestMapping("")
@@ -44,31 +43,30 @@ public class AuthController {
     private final AuthService authService;
     private final UserService userService;
     private final UserMapper userMapper;
+    private final EmailService emailService;
+
     @Operation(summary = "Register")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Success")
     })
     @PostMapping("/register")
-    public ResponseEntity<UserDTO> registerUser(@RequestBody UserDTO userDTO){
-        MyUser user = userService.create(userDTO);
+    public ResponseEntity<RegDtoReq> registerUser(@RequestBody @Valid RegDtoReq req) {
+        MyUser user = userService.create(req);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(userMapper.toDTO(user));
     }
 
-    @GetMapping("/token/{token}")
-    public ResponseEntity<String> token( @PathVariable String token) {
-            Jws<Claims> jwsToken = Token.parseJwt(token);
-            String tokenStr=jwsToken.toString();
-            int indexStart = tokenStr.indexOf("email") + "email".length()+1;
-            int indexEnd = tokenStr.indexOf(",", indexStart);
-            String email = tokenStr.substring(indexStart, indexEnd);
-            Optional<MyUser> user = userService.findByEmail(email);
-            if(user.isEmpty()) {
-                throw new GeneralException(404, "пользователь не найден");
-            }
-            userService.updateSubmitFlagUser(user.get());
-            return new ResponseEntity<>(tokenStr, HttpStatus.OK);
+    @GetMapping("/confirm/{token}")
+    public ResponseEntity<String> confirm(@PathVariable String token) {
+        Jws<Claims> jwsToken = Token.parseJwt(token);
+        String tokenStr = jwsToken.toString();
+        int indexStart = tokenStr.indexOf("email") + "email".length() + 1;
+        int indexEnd = tokenStr.indexOf(",", indexStart);
+        String email = tokenStr.substring(indexStart, indexEnd);
+        MyUser user = userService.findByEmail(email);
+        userService.updateSubmitFlagUser(user);
+        return ResponseEntity.status(HttpStatus.OK).body("Почта успешно подтвеждена");
     }
 
     @Operation(summary = "Login")
@@ -80,7 +78,7 @@ public class AuthController {
                     })
     })
     @PostMapping("/login")
-    public ResponseEntity<JwtTokenDtoRes> login(@RequestBody @Valid LoginDtoReq req){
+    public ResponseEntity<JwtTokenDtoRes> login(@RequestBody @Valid LoginDtoReq req) {
         MyUser user = authService.login(req);
         JwtTokenDtoRes res = new JwtTokenDtoRes();
         res.setAccess(JwtUtil.generateAccessToken(user));
@@ -89,6 +87,29 @@ public class AuthController {
                 .status(HttpStatus.OK)
                 .body(res);
     }
+
+    @PostMapping("/recover")
+    public @ResponseBody ResponseEntity<String> recover(@RequestBody EmailDTOReq req) {
+        try {
+            emailService.recoverPasswordEmail(req.email());
+        } catch (MailException mailException) {
+            throw new GeneralException(550, "Unable to send email");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body("Please check your inbox");
+    }
+
+    @PostMapping("/recover/{token}")
+    public @ResponseBody ResponseEntity<String> recover(@PathVariable String token, @RequestBody RecoverPasswordDTOReq req) {
+            Jws<Claims> jwsToken = Token.parseJwt(token);
+            String tokenStr=jwsToken.toString();
+            int indexStart = tokenStr.indexOf("email") + "email".length()+1;
+            int indexEnd = tokenStr.indexOf(",", indexStart);
+            String email = tokenStr.substring(indexStart, indexEnd);
+            MyUser user = userService.findByEmail(email);
+            userService.updatePassword(user.getUserId(), req.password());
+            return ResponseEntity.status(HttpStatus.OK).body("пароль успешно изменен");
+    }
+
     @Operation(summary = "Refresh token")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Success",
@@ -98,7 +119,7 @@ public class AuthController {
                     })
     })
     @PostMapping("/refresh")
-    public ResponseEntity<JwtTokenDtoRes> refresh(@RequestBody @Valid RefreshDto req){
+    public ResponseEntity<JwtTokenDtoRes> refresh(@RequestBody @Valid RefreshDto req) {
         JwtTokenDtoRes res = authService.refresh(req);
         return ResponseEntity
                 .status(HttpStatus.OK)

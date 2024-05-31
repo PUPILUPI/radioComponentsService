@@ -6,9 +6,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.belov.radioComponentsService.domain.dto.sql.ConsumerInfoDTO;
 import ru.belov.radioComponentsService.domain.dto.sql.ChangeSellerInfoDTO;
-import ru.belov.radioComponentsService.domain.dto.sql.UserDTO;
+import ru.belov.radioComponentsService.domain.dto.sql.CreateConsumerInfoDTOReq;
+import ru.belov.radioComponentsService.domain.dto.sql.RegDtoReq;
 import ru.belov.radioComponentsService.domain.entity.sql.MyUser;
 import ru.belov.radioComponentsService.exceptions.GeneralException;
 import ru.belov.radioComponentsService.mapper.UserMapper;
@@ -33,48 +33,40 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void updatePassword(MyUser user, String password) {
-//        String newPassword = passwordEncoder.encode(password);
-//        entityUser.setPassword(newPassword);
-//        userRepository.save(entityUser);
+    public void updatePassword(Long id, String password) {
+        MyUser user = this.getById(id);
+        user.setPassword(passwordEncoder.encode(password));
+        userRepository.save(user);
     }
 
     @Transactional
-    public MyUser create(UserDTO userDTO) {
-        if (userRepository.findByEmail(userDTO.email()).isPresent()) {
+    public MyUser create(RegDtoReq req) {
+        if (userRepository.findByEmail(req.email()).isPresent()) {
             throw new GeneralException(409, "Пользователь с таким email уже существует");
         }
-        MyUser user = userMapper.toEntity(userDTO);
-        user.setPassword(passwordEncoder.encode(userDTO.password()));
+        MyUser user = userMapper.toEntity(req);
+        user.setPassword(passwordEncoder.encode(req.password()));
         user = userRepository.save(user);
         if (user.getUserRole().equals("INDIVIDUAL_CUSTOMER")
                 || user.getUserRole().equals("LEGAL_CUSTOMER")) {
-            consumerInfoService.create(new ConsumerInfoDTO(user.getUserId()));
+            consumerInfoService.create(new CreateConsumerInfoDTOReq(user.getUserId()));
         } else if (user.getUserRole().equals("SUPPLIER")
                 || user.getUserRole().equals("MANUFACTURER")) {
             sellerInfoService.create(new ChangeSellerInfoDTO(user.getUserId()));
         }
         try {
-            emailService.sendEmail(userDTO.email());
+            emailService.confirmEmail(req.email());
         } catch (MailException mailException) {
-            throw new RuntimeException("Unable to send email");
+            throw new GeneralException(550, "Unable to send email");
         }
         return user;
     }
-
-    public UserDTO getUserInfo(Long id) {
+    public MyUser getById(Long id) {
         return userRepository.findById(id)
-                .map(userMapper::toDTO)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new GeneralException(404, "пользователь не найден"));
     }
-
-    public MyUser getById(Long id){
-        return userRepository.findById(id)
-                .orElseThrow();
-    }
-
-    public Optional<MyUser> findByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public MyUser findByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() -> new GeneralException(404, "пользователь не найден"));
     }
 
 }

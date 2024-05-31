@@ -4,11 +4,14 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import ru.belov.radioComponentsService.domain.dto.sql.ConsumerInfoDTO;
+import ru.belov.radioComponentsService.domain.dto.sql.ChangeConsumerInfoDTOReq;
+import ru.belov.radioComponentsService.domain.dto.sql.ChangeConsumerInfoDTORes;
+import ru.belov.radioComponentsService.domain.dto.sql.CreateConsumerInfoDTOReq;
+import ru.belov.radioComponentsService.domain.dto.sql.CreateConsumerInfoDTORes;
 import ru.belov.radioComponentsService.domain.entity.sql.MyUser;
+import ru.belov.radioComponentsService.mapper.ConsumerInfoMapper;
 import ru.belov.radioComponentsService.security.CustomUserDetails;
 import ru.belov.radioComponentsService.service.ConsumerInfoService;
 
@@ -19,24 +22,31 @@ import ru.belov.radioComponentsService.service.ConsumerInfoService;
 @RequiredArgsConstructor
 public class ConsumerInfoController {
     private final ConsumerInfoService service;
+    private final ConsumerInfoMapper consumerInfoMapper;
 
 
     @PostMapping
-    @Secured("ROLE_AUTH")
-    public ResponseEntity<ConsumerInfoDTO> createConsumerInfo(@RequestBody ConsumerInfoDTO dto,
-                                                              @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        MyUser user = customUserDetails.getUser(); // этот чел делает запрос
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(dto));
+    public ResponseEntity<CreateConsumerInfoDTORes> createConsumerInfo(@RequestBody CreateConsumerInfoDTOReq req) {
+        CreateConsumerInfoDTORes res = consumerInfoMapper.toCreatedDTO(service.create(req));
+        return ResponseEntity.status(HttpStatus.CREATED).body(res);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ConsumerInfoDTO> getConsumerInfo(@PathVariable Long id) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.getConsumerInfo(id));
+    //    @Secured("ROLE_AUTH")
+    @GetMapping()
+    public ResponseEntity<ChangeConsumerInfoDTORes> getConsumerInfo(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        MyUser user = customUserDetails.getUser();
+        ChangeConsumerInfoDTORes res = consumerInfoMapper.toChangedDTO(
+                service.getConsumerInfo(user.getUserId()));
+        return ResponseEntity.status(HttpStatus.OK).body(res);
     }
 
     @PutMapping
-    public ResponseEntity<ConsumerInfoDTO> updateConsumerInfo(@RequestBody ConsumerInfoDTO consumerInfoDTO) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.updateConsumerInfo(consumerInfoDTO));
+    public ResponseEntity<ChangeConsumerInfoDTORes> updateConsumerInfo(@RequestBody ChangeConsumerInfoDTOReq req,
+                                                                       @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        MyUser user = customUserDetails.getUser();
+        ChangeConsumerInfoDTORes res = consumerInfoMapper.toChangedDTO(
+                service.updateConsumerInfo(user.getUserId(), req));
+        return ResponseEntity.status(HttpStatus.OK).body(res);
     }
 
 

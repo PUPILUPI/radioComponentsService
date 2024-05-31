@@ -22,9 +22,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
-/**
- * @author Vladimir Krasnov
- */
+
 @RestControllerAdvice
 @RequiredArgsConstructor
 @Slf4j

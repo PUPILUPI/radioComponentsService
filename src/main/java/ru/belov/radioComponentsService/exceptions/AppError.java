@@ -4,9 +4,6 @@ import lombok.Data;
 
 import java.util.Date;
 
-/**
- * @author Vladimir Krasnov
- */
 @Data
 public class AppError {
     private int status;
