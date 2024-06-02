@@ -14,23 +14,25 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import ru.belov.radioComponentsService.domain.RefreshDto;
 import ru.belov.radioComponentsService.domain.dto.JwtTokenDtoRes;
 import ru.belov.radioComponentsService.domain.dto.sql.EmailDTOReq;
 import ru.belov.radioComponentsService.domain.dto.sql.LoginDtoReq;
-import ru.belov.radioComponentsService.domain.dto.sql.RecoverPasswordDTOReq;
+import ru.belov.radioComponentsService.domain.dto.sql.PasswordDTOReq;
 import ru.belov.radioComponentsService.domain.dto.sql.RegDtoReq;
 import ru.belov.radioComponentsService.domain.entity.sql.MyUser;
 import ru.belov.radioComponentsService.exceptions.GeneralException;
 import ru.belov.radioComponentsService.jwt.Token;
 import ru.belov.radioComponentsService.mapper.UserMapper;
+import ru.belov.radioComponentsService.security.CustomUserDetails;
 import ru.belov.radioComponentsService.service.AuthService;
 import ru.belov.radioComponentsService.service.EmailService;
 import ru.belov.radioComponentsService.service.UserService;
 import ru.belov.radioComponentsService.utils.JwtUtil;
-
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -89,7 +91,7 @@ public class AuthController {
     }
 
     @PostMapping("/recover")
-    public @ResponseBody ResponseEntity<String> recover(@RequestBody EmailDTOReq req) {
+    public @ResponseBody ResponseEntity<String> recover(@RequestBody @Valid EmailDTOReq req) {
         try {
             emailService.recoverPasswordEmail(req.email());
         } catch (MailException mailException) {
@@ -99,7 +101,7 @@ public class AuthController {
     }
 
     @PostMapping("/recover/{token}")
-    public @ResponseBody ResponseEntity<String> recover(@PathVariable String token, @RequestBody RecoverPasswordDTOReq req) {
+    public @ResponseBody ResponseEntity<String> recover(@PathVariable String token, @RequestBody @Valid PasswordDTOReq req) {
             Jws<Claims> jwsToken = Token.parseJwt(token);
             String tokenStr=jwsToken.toString();
             int indexStart = tokenStr.indexOf("email") + "email".length()+1;
@@ -124,5 +126,14 @@ public class AuthController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(res);
+    }
+
+    @PostMapping("/update")
+//    @PreAuthorize("hasRole('MANUFACTURER')")
+    @Secured("ROLE_SUPPLIER")
+    public ResponseEntity<String> update(@RequestBody @Valid PasswordDTOReq req,
+                                         @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        userService.updatePassword(customUserDetails.getUser().getUserId(), req.password());
+        return ResponseEntity.status(HttpStatus.OK).body("пароль успешно изменен");
     }
 }

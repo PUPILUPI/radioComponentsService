@@ -1,15 +1,14 @@
 package ru.belov.radioComponentsService.mapper;
 
 import org.springframework.stereotype.Component;
-import ru.belov.radioComponentsService.domain.dto.sql.ChangeSellerInfoDTO;
-import ru.belov.radioComponentsService.domain.dto.sql.DisplaySellerInfoDTO;
+import ru.belov.radioComponentsService.domain.dto.sql.*;
 import ru.belov.radioComponentsService.domain.entity.sql.SellerInfo;
 
 import java.util.List;
 
 @Component
 public class SellerInfoMapper {
-    public SellerInfo toEntity(ChangeSellerInfoDTO dto) {
+    public SellerInfo toEntity(CreateSellerInfoDTOReq dto) {
         return new SellerInfo().toBuilder()
                 .bankName(dto.bankName())
                 .rcBic(dto.rcBic())
@@ -24,36 +23,59 @@ public class SellerInfoMapper {
                 .phoneNumber(dto.phoneNumber())
                 .email(dto.email())
                 .indFlag(dto.indFlag())
+                .responseFormat(dto.responseFormat())
                 .apiAddress(dto.apiAddress())
                 .build();
     }
 
-    public ChangeSellerInfoDTO toDTO(SellerInfo sellerInfo) {
-        return new ChangeSellerInfoDTO(
-                sellerInfo.getId(),
-                sellerInfo.getBankName(),
-                sellerInfo.getRcBic(),
-                sellerInfo.getCorrAcc(),
-                sellerInfo.getCompanyName(),
-                sellerInfo.getZip(),
-                sellerInfo.getCity(),
-                sellerInfo.getBusinessAddress(),
-                sellerInfo.getInn(),
-                sellerInfo.getKpp(),
-                sellerInfo.getAcc(),
-                sellerInfo.getPhoneNumber(),
-                sellerInfo.getEmail(),
-                sellerInfo.getIndFlag(),
-                sellerInfo.getApiAddress()
+    public CreateSellerInfoDTORes toCreatedDTO(SellerInfo entity) {
+        return new CreateSellerInfoDTORes(
+                entity.getId(),
+                entity.getBankName(),
+                entity.getRcBic(),
+                entity.getCorrAcc(),
+                entity.getCompanyName(),
+                entity.getZip(),
+                entity.getCity(),
+                entity.getBusinessAddress(),
+                entity.getInn(),
+                entity.getKpp(),
+                entity.getAcc(),
+                entity.getPhoneNumber(),
+                entity.getEmail(),
+                entity.getIndFlag(),
+                entity.getResponseFormat(),
+                entity.getApiAddress()
         );
     }
 
-    public List<DisplaySellerInfoDTO> toDTO(List<SellerInfo> info) {
+    public ChangeSellerInfoDTORes toChangedDTO(SellerInfo entity) {
+        return new ChangeSellerInfoDTORes(
+                entity.getBankName(),
+                entity.getRcBic(),
+                entity.getCorrAcc(),
+                entity.getCompanyName(),
+                entity.getZip(),
+                entity.getCity(),
+                entity.getBusinessAddress(),
+                entity.getInn(),
+                entity.getKpp(),
+                entity.getAcc(),
+                entity.getPhoneNumber(),
+                entity.getEmail(),
+                entity.getIndFlag(),
+                entity.getResponseFormat(),
+                entity.getApiAddress()
+        );
+    }
+
+    public List<DisplaySellerInfoDTO> toDisplayDTOs(List<SellerInfo> info) {
         return info.stream().map(this::toDisplayDTO).toList();
     }
 
-    private DisplaySellerInfoDTO toDisplayDTO(SellerInfo sellerInfo) {
+    public DisplaySellerInfoDTO toDisplayDTO(SellerInfo sellerInfo) {
         return new DisplaySellerInfoDTO(
+                sellerInfo.getId(),
                 sellerInfo.getCompanyName(),
                 sellerInfo.getZip(),
                 sellerInfo.getCity(),

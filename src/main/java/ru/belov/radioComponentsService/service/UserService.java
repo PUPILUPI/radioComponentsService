@@ -6,15 +6,13 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.belov.radioComponentsService.domain.dto.sql.ChangeSellerInfoDTO;
 import ru.belov.radioComponentsService.domain.dto.sql.CreateConsumerInfoDTOReq;
+import ru.belov.radioComponentsService.domain.dto.sql.CreateSellerInfoDTOReq;
 import ru.belov.radioComponentsService.domain.dto.sql.RegDtoReq;
 import ru.belov.radioComponentsService.domain.entity.sql.MyUser;
 import ru.belov.radioComponentsService.exceptions.GeneralException;
 import ru.belov.radioComponentsService.mapper.UserMapper;
 import ru.belov.radioComponentsService.repository.UserRepository;
-
-import java.util.Optional;
 
 
 @Service
@@ -52,7 +50,7 @@ public class UserService {
             consumerInfoService.create(new CreateConsumerInfoDTOReq(user.getUserId()));
         } else if (user.getUserRole().equals("SUPPLIER")
                 || user.getUserRole().equals("MANUFACTURER")) {
-            sellerInfoService.create(new ChangeSellerInfoDTO(user.getUserId()));
+            sellerInfoService.create(new CreateSellerInfoDTOReq(user.getUserId()));
         }
         try {
             emailService.confirmEmail(req.email());

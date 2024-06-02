@@ -3,9 +3,6 @@ package ru.belov.radioComponentsService.domain.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
-/**
- * @author Vladimir Krasnov
- */
 @Data
 @Builder
 @NoArgsConstructor

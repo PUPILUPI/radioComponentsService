@@ -4,7 +4,6 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 
 public record RegDtoReq(
-        Long id,
         String roleUser,
         String surname,
 

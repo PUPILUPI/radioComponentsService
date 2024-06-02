@@ -20,7 +20,6 @@ public class UserMapper {
 
     public RegDtoReq toDTO(MyUser user) {
         return new RegDtoReq(
-                user.getUserId(),
                 user.getUserRole(),
                 user.getSurname(),
                 user.getFirstName(),

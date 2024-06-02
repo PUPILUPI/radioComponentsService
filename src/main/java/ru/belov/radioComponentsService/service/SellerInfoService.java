@@ -4,11 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import ru.belov.radioComponentsService.domain.dto.sql.ChangeSellerInfoDTO;
+import ru.belov.radioComponentsService.domain.dto.sql.ChangeSellerInfoDTOReq;
+import ru.belov.radioComponentsService.domain.dto.sql.CreateSellerInfoDTOReq;
 import ru.belov.radioComponentsService.domain.dto.sql.DisplaySellerInfoDTO;
 import ru.belov.radioComponentsService.domain.dto.sql.FilterSellerInfoDTO;
-import ru.belov.radioComponentsService.domain.entity.sql.SellerInfo;
 import ru.belov.radioComponentsService.domain.entity.sql.MyUser;
+import ru.belov.radioComponentsService.domain.entity.sql.SellerInfo;
+import ru.belov.radioComponentsService.exceptions.GeneralException;
 import ru.belov.radioComponentsService.mapper.SellerInfoMapper;
 import ru.belov.radioComponentsService.repository.SellerInfoRepository;
 import ru.belov.radioComponentsService.repository.UserRepository;
@@ -25,41 +27,40 @@ public class SellerInfoService {
     private final SellerInfoMapper sellerInfoMapper;
 
 
-    public ChangeSellerInfoDTO create(ChangeSellerInfoDTO dto) {
-        MyUser user = userRepository.findById(dto.id())
+    public SellerInfo create(CreateSellerInfoDTOReq req) {
+        MyUser user = userRepository.findById(req.id())
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        SellerInfo sellerInfo = sellerInfoMapper.toEntity(dto);
-        if (!Objects.equals(user.getUserRole(), "MANUFACTURER")) sellerInfo.setFlagManufacturer(false);
+        SellerInfo sellerInfo = sellerInfoMapper.toEntity(req);
+        sellerInfo.setFlagManufacturer(Objects.equals(user.getUserRole(), "MANUFACTURER"));
         sellerInfo.setUser(user);
-        return sellerInfoMapper.toDTO(sellerInfoRepository.save(sellerInfo));
+        return sellerInfoRepository.save(sellerInfo);
     }
 
-    public ChangeSellerInfoDTO getSellerInfo(Long id) {
+    public SellerInfo getSellerInfo(Long id) {
         return sellerInfoRepository.findById(id)
-                .map(sellerInfoMapper::toDTO)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new GeneralException(404, "User not found"));
     }
 
-    public ChangeSellerInfoDTO updateSellerInfo(ChangeSellerInfoDTO dto) {
-        SellerInfo newSellerInfo = sellerInfoRepository.findById(dto.id()).map(oldInfo -> {
-                    oldInfo.setBankName(dto.bankName());
-                    oldInfo.setRcBic(dto.rcBic());
-                    oldInfo.setCorrAcc(dto.corrAcc());
-                    oldInfo.setCompanyName(dto.companyName());
-                    oldInfo.setZip(dto.zip());
-                    oldInfo.setCity(dto.city());
-                    oldInfo.setBusinessAddress(dto.businessAddress());
-                    oldInfo.setInn(dto.inn());
-                    oldInfo.setKpp(dto.kpp());
-                    oldInfo.setAcc(dto.acc());
-                    oldInfo.setPhoneNumber(dto.phoneNumber());
-                    oldInfo.setEmail(dto.email());
-                    oldInfo.setIndFlag(dto.indFlag());
-                    oldInfo.setApiAddress(dto.apiAddress());
+    public SellerInfo updateSellerInfo(Long id, ChangeSellerInfoDTOReq req) {
+        return sellerInfoRepository.findById(id).map(oldInfo -> {
+                    oldInfo.setBankName(req.bankName());
+                    oldInfo.setRcBic(req.rcBic());
+                    oldInfo.setCorrAcc(req.corrAcc());
+                    oldInfo.setCompanyName(req.companyName());
+                    oldInfo.setZip(req.zip());
+                    oldInfo.setCity(req.city());
+                    oldInfo.setBusinessAddress(req.businessAddress());
+                    oldInfo.setInn(req.inn());
+                    oldInfo.setKpp(req.kpp());
+                    oldInfo.setAcc(req.acc());
+                    oldInfo.setPhoneNumber(req.phoneNumber());
+                    oldInfo.setEmail(req.email());
+                    oldInfo.setIndFlag(req.indFlag());
+                    oldInfo.setResponseFormat(req.responseFormat());
+                    oldInfo.setApiAddress(req.apiAddress());
                     return sellerInfoRepository.save(oldInfo);
                 })
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        return sellerInfoMapper.toDTO(newSellerInfo);
+                .orElseThrow(() -> new GeneralException(404, "User not found"));
     }
 
     public List<DisplaySellerInfoDTO> filter(FilterSellerInfoDTO filter, Pageable pageable) {
@@ -76,6 +77,22 @@ public class SellerInfoService {
         if (filter.city() != null) {
             spec = spec.and(SellerInfoSpecification.hasCity(filter.city()));
         }
-        return sellerInfoMapper.toDTO(sellerInfoRepository.findAll(spec, pageable).toList());
+        return sellerInfoMapper.toDisplayDTOs(sellerInfoRepository.findAll(spec, pageable).toList());
+    }
+    public List<SellerInfo> getDataForReq(FilterSellerInfoDTO filter) {
+        Specification<SellerInfo> spec = Specification.where(null);
+        if (filter.indFlag() != null) {
+            spec = spec.and(SellerInfoSpecification.hasIndFlag(filter.indFlag()));
+        }
+        if (filter.flagManufacturer() != null) {
+            spec = spec.and(SellerInfoSpecification.hasflagManufacturer(filter.flagManufacturer()));
+        }
+        if (filter.rating() != null) {
+            spec = spec.and(SellerInfoSpecification.hasRatingGreaterThanOrEqual(filter.rating()));
+        }
+        if (filter.city() != null) {
+            spec = spec.and(SellerInfoSpecification.hasCity(filter.city()));
+        }
+        return sellerInfoRepository.findAll(spec);
     }
 }

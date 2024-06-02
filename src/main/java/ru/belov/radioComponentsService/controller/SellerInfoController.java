@@ -2,17 +2,18 @@ package ru.belov.radioComponentsService.controller;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import ru.belov.radioComponentsService.domain.dto.sql.ChangeSellerInfoDTO;
-import ru.belov.radioComponentsService.domain.dto.sql.DisplaySellerInfoDTO;
-import ru.belov.radioComponentsService.domain.dto.sql.FilterSellerInfoDTO;
+import ru.belov.radioComponentsService.domain.dto.sql.*;
+import ru.belov.radioComponentsService.domain.entity.sql.MyUser;
+import ru.belov.radioComponentsService.mapper.SellerInfoMapper;
+import ru.belov.radioComponentsService.security.CustomUserDetails;
 import ru.belov.radioComponentsService.service.SellerInfoService;
 
 import java.util.List;
@@ -24,20 +25,30 @@ import java.util.List;
 @SecurityRequirement(name = "bearerAuth")
 public class SellerInfoController {
     private final SellerInfoService service;
+    private final SellerInfoMapper sellerInfoMapper;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ChangeSellerInfoDTO> getSellerInfo(@PathVariable Long id) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.getSellerInfo(id));
+    @GetMapping()
+    public ResponseEntity<ChangeSellerInfoDTORes> getSellerInfo(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        MyUser user = customUserDetails.getUser();
+        ChangeSellerInfoDTORes res = sellerInfoMapper.toChangedDTO(
+                service.getSellerInfo(user.getUserId()));
+        return ResponseEntity.status(HttpStatus.OK).body(res);
     }
 
     @PostMapping
-    public ResponseEntity<ChangeSellerInfoDTO> createSellerInfo(@RequestBody ChangeSellerInfoDTO dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(dto));
+    public ResponseEntity<CreateSellerInfoDTORes> createSellerInfo(@RequestBody CreateSellerInfoDTOReq req) {
+        CreateSellerInfoDTORes res = sellerInfoMapper.toCreatedDTO(service.create(req));
+        return ResponseEntity.status(HttpStatus.CREATED).body(res);
     }
 
+
     @PutMapping
-    public ResponseEntity<ChangeSellerInfoDTO> updateSellerInfo(@RequestBody ChangeSellerInfoDTO sellerInfoDTO) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.updateSellerInfo(sellerInfoDTO));
+    public ResponseEntity<ChangeSellerInfoDTORes> updateSellerInfo(@RequestBody ChangeSellerInfoDTOReq req,
+                                                                   @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        MyUser user = customUserDetails.getUser();
+        ChangeSellerInfoDTORes res = sellerInfoMapper.toChangedDTO(
+                service.updateSellerInfo(user.getUserId(), req));
+        return ResponseEntity.status(HttpStatus.OK).body(res);
     }
 
     @Transactional
@@ -46,13 +57,4 @@ public class SellerInfoController {
                                                                              @RequestBody FilterSellerInfoDTO filter) {
         return ResponseEntity.status(HttpStatus.OK).body(service.filter(filter, pageable));
     }
-
-
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<Void> deleteSellerInfo(@PathVariable Long id) {
-//        return ResponseEntity.status(HttpStatus.OK).body(service.);
-//    }
-
-//    @PatchMapping("/update")
-//    public Seller update()
 }

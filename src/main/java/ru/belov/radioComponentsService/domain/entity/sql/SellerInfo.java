@@ -66,6 +66,9 @@ public class SellerInfo {
     @Column(name = "rating")
     private Double rating;
 
+    @Column(name = "api_response_format")
+    private String responseFormat;
+
     @Column(name = "api_address")
     private String apiAddress;
 

@@ -100,6 +100,18 @@
             <artifactId>jakarta.xml.bind-api</artifactId>
             <version>3.0.1</version>
         </dependency>
+<!--        зависимости, необходимые для парсинга xml-формата -->
+<!--        при получении ответа от стороннего api (две снизу)-->
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>2.3.1</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

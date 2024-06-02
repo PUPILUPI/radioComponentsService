@@ -10,6 +10,5 @@ import lombok.*;
 public class LoginDtoReq {
     @Email
     private String email;
-    @Size(min = 6, max = 20)
     private String password;
 }

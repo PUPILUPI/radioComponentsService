@@ -68,7 +68,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     private List<SimpleGrantedAuthority> mapAuthorities(MyUser user){
         return List.of(
-                new SimpleGrantedAuthority(user.getUserRole()),
+                new SimpleGrantedAuthority("ROLE_" + user.getUserRole()),
                 new SimpleGrantedAuthority("ROLE_AUTH"));
     }
 }
