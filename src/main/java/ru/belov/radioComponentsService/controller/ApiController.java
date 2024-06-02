@@ -2,15 +2,11 @@ package ru.belov.radioComponentsService.controller;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 import ru.belov.radioComponentsService.domain.apiFormat.ChipFindParser;
-import ru.belov.radioComponentsService.domain.apiFormat.RadioComponentFormat;
 import ru.belov.radioComponentsService.domain.dto.SearchDetailDTORes;
-import ru.belov.radioComponentsService.domain.dto.sql.SellerDetail;
-import ru.belov.radioComponentsService.exceptions.GeneralException;
+import ru.belov.radioComponentsService.security.CustomUserDetails;
 import ru.belov.radioComponentsService.service.ApiService;
 
 import java.util.List;
@@ -25,12 +21,22 @@ public class ApiController {
     private final ChipFindParser parser;
 
     @GetMapping
-    public List<SearchDetailDTORes> getPostsPlainJSON() {
-        return apiService.fetchUrls(null, null, null, null, null, null);
+    public List<SearchDetailDTORes> find(@RequestParam String detailName,
+                                         @RequestParam(required = false) Boolean indFlag,
+                                         @RequestParam(required = false) Double rating,
+                                         @RequestParam(required = false) Boolean flagManufacturer,
+                                         @RequestParam(required = false) String city,
+                                         @RequestParam(required = false) Boolean favoriteFlag,
+                                         @RequestParam(required = false) Boolean blacklistFlag,
+                                         @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        return apiService.doRequests(
+                customUserDetails.getUser().getUserId(),
+                indFlag,
+                rating,
+                flagManufacturer,
+                city,
+                favoriteFlag,
+                blacklistFlag);
     }
 
-    @GetMapping("/test")
-    public String test() {
-        throw new GeneralException(409, "Привет");
-    }
 }

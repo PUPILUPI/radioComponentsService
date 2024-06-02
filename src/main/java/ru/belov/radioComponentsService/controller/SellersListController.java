@@ -8,7 +8,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import ru.belov.radioComponentsService.domain.dto.sql.AddSellerToListReq;
 import ru.belov.radioComponentsService.domain.dto.sql.SellersListDTORes;
-import ru.belov.radioComponentsService.domain.entity.sql.SellersList;
 import ru.belov.radioComponentsService.mapper.SellersListMapper;
 import ru.belov.radioComponentsService.security.CustomUserDetails;
 import ru.belov.radioComponentsService.service.SellersListService;
@@ -33,11 +32,25 @@ public class SellersListController {
 
     @GetMapping()
     public ResponseEntity<List<SellersListDTORes>> getSellersByUserIdAndTypeList(@RequestParam Boolean favoriteFlag,
-            @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+                                                                                 @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         List<SellersListDTORes> res = service.getByConsumerIdAndTypeList(customUserDetails.getUser().getUserId(), favoriteFlag)
                 .stream()
                 .map(mapper::toDTO)
                 .toList();
         return ResponseEntity.status(HttpStatus.OK).body(res);
+    }
+
+    @PutMapping("/move")
+    public ResponseEntity<String> moveSellerToAnotherList(@RequestParam Long sellerId,
+                                                          @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        service.update(customUserDetails.getUser().getUserId(), sellerId);
+        return ResponseEntity.status(HttpStatus.OK).body("Продавец успешно добавлен в другой список");
+    }
+
+    @DeleteMapping
+    public ResponseEntity<String> delete(@RequestParam Long sellerId,
+                                         @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        service.remove(customUserDetails.getUser().getUserId(), sellerId);
+        return ResponseEntity.status(HttpStatus.OK).body("Продавец успешно удален");
     }
 }

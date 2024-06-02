@@ -77,6 +77,9 @@ public class SellerInfoService {
         if (filter.city() != null) {
             spec = spec.and(SellerInfoSpecification.hasCity(filter.city()));
         }
+        if(filter.companyName() != null) {
+            spec = spec.and(SellerInfoSpecification.hasCompanyNameLike(filter.companyName()));
+        }
         return sellerInfoMapper.toDisplayDTOs(sellerInfoRepository.findAll(spec, pageable).toList());
     }
     public List<SellerInfo> getDataForReq(FilterSellerInfoDTO filter) {
