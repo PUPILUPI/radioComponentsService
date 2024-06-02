@@ -17,7 +17,7 @@ public class RadioComponentsApplication {
     public static void main(String[] args) {
         SpringApplication.run(RadioComponentsApplication.class, args);
     }
-//    @PostConstruct
+    @PostConstruct
     public void generateAndSaveKeyPair() {
         try {
             KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");

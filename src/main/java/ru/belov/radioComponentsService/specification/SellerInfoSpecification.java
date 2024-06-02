@@ -4,7 +4,7 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.experimental.UtilityClass;
 import org.springframework.data.jpa.domain.Specification;
 import ru.belov.radioComponentsService.domain.entity.sql.SellerInfo;
-import ru.belov.radioComponentsService.domain.entity.sql.SellerInfo_;
+//import ru.belov.radioComponentsService.domain.entity.sql.SellerInfo_;
 
 import java.util.List;
 
