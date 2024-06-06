@@ -85,6 +85,7 @@ public class AuthController {
         JwtTokenDtoRes res = new JwtTokenDtoRes();
         res.setAccess(JwtUtil.generateAccessToken(user));
         res.setRefresh(JwtUtil.generateRefreshToken(user));
+        res.setRole(user.getUserRole());
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(res);

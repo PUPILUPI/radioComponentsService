@@ -9,6 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class JwtTokenDtoRes {
+    private String role;
     private String access;
     private String refresh;
 }

@@ -406,13 +406,13 @@ CREATE TABLE IF NOT EXISTS public.seller_request
 -- message - пожелания по количеству, срокам, иные детали
 CREATE TABLE IF NOT EXISTS public.request_item
 (
-    product_id      uuid PRIMARY KEY,
-    seller_order_id uuid           NOT NULL REFERENCES public.seller_order (seller_order_id),
-    seller_id       BIGINT         NOT NULL REFERENCES public."user" (user_id),
-    product_name    VARCHAR(128)   NOT NULL,
-    quantity        INTEGER        NOT NULL,
-    price           NUMERIC(10, 2) NOT NULL,
-    message         VARCHAR(256)
+    product_id        uuid PRIMARY KEY,
+    seller_request_id uuid           NOT NULL REFERENCES public.seller_request (seller_request_id),
+    seller_id         BIGINT         NOT NULL REFERENCES public."user" (user_id),
+    product_name      VARCHAR(128)   NOT NULL,
+    quantity          INTEGER        NOT NULL,
+    price             NUMERIC(10, 2) NOT NULL,
+    message           VARCHAR(256)
 );
 
 -- sub_seller - таблица для помошников продавца - подпользователь
