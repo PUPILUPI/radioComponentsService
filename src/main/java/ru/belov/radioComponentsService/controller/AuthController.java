@@ -130,8 +130,7 @@ public class AuthController {
     }
 
     @PostMapping("/update")
-//    @PreAuthorize("hasRole('MANUFACTURER')")
-    @Secured("ROLE_SUPPLIER")
+    @Secured("ROLE_AUTH")
     public ResponseEntity<String> update(@RequestBody @Valid PasswordDTOReq req,
                                          @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         userService.updatePassword(customUserDetails.getUser().getUserId(), req.password());

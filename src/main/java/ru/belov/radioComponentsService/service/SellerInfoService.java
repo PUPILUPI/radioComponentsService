@@ -84,8 +84,8 @@ public class SellerInfoService {
     }
     public List<SellerInfo> getDataForReq(FilterSellerInfoDTO filter) {
         Specification<SellerInfo> spec = Specification.where(null);
-        if (filter.indFlag() != null) {
-            spec = spec.and(SellerInfoSpecification.hasIndFlag(filter.indFlag()));
+        if (filter.indFlag()) {
+            spec = spec.and(SellerInfoSpecification.hasIndFlag(true));
         }
         if (filter.flagManufacturer() != null) {
             spec = spec.and(SellerInfoSpecification.hasflagManufacturer(filter.flagManufacturer()));

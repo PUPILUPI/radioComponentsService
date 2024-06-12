@@ -10,6 +10,7 @@ import ru.belov.radioComponentsService.domain.apiFormat.*;
 import ru.belov.radioComponentsService.domain.dto.SearchDetailDTORes;
 import ru.belov.radioComponentsService.domain.dto.sql.FilterSellerInfoDTO;
 import ru.belov.radioComponentsService.domain.entity.sql.SellerInfo;
+import ru.belov.radioComponentsService.exceptions.GeneralException;
 import ru.belov.radioComponentsService.mapper.SellerInfoMapper;
 import ru.belov.radioComponentsService.repository.SellerInfoRepository;
 import ru.belov.radioComponentsService.repository.SellersListRepository;
@@ -90,6 +91,9 @@ public class ApiService {
     }
 
     private List<SearchDetailDTORes> doRequests(List<SellerInfo> sellers) {
+        if (sellers.size() == 0) {
+            return new ArrayList<>();
+        }
         CountDownLatch latch = new CountDownLatch(sellers.size());
         List<Future<String>> futures = new ArrayList<>();
         List<SearchDetailDTORes> results = new ArrayList<>();
